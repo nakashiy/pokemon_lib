@@ -3,12 +3,76 @@
 namespace pokemon_lib\manager;
 
 use pokemon_lib\manager\Pokemon;
+use pokemon_lib\core\RedisManager;
 
-// ポケモンAPIを利用するクラス
+/**
+ * 条件を指定してポケモン情報を取得するクラス
+ */
 class PokemonSelect
 {
     public function __construct()
     { }
+
+    /**
+     * 単体の情報を取得
+     * $id int ポケモンID
+     * @return array
+     */
+    public function single($id)
+    {
+        $Pokemon = new Pokemon($id);
+        return $Pokemon->get();
+    }
+    /**
+     * 複数の情報を取得
+     * $ids array ポケモンID
+     * @return array
+     */
+    public function multi($ids)
+    {
+        $pokemons = [];
+        foreach ($ids as $id) {
+            $Pokemon = new Pokemon($id);
+            $pokemons[] = $Pokemon->get();
+        }
+        return $pokemons;
+    }
+    /**
+     * すべての情報を取得
+     * @return array
+     */
+    public function all()
+    {
+        $RedisManager = new RedisManager();
+        $redis_keys = $RedisManager->allKeys();
+        $pokemons = [];
+        foreach ($redis_keys as $key) {
+            $pokemons[] = $RedisManager->get($key);
+        }
+        return $pokemons;
+    }
+
+    /**
+     * 名前で検索
+     * $str string 検索文字
+     * @return array
+     */
+    public function whereName($str, $operator = 'like')
+    {
+        $RedisManager = new RedisManager();
+        $redis_keys = $RedisManager->pokemonKeys();
+        $pokemons = [];
+        foreach ($redis_keys as $key) {
+            $pokemons[] = $RedisManager->get($key);
+        }
+        $result = [];
+        foreach ($pokemons as $pokemon) {
+            if (strpos($pokemon['name']['ja'], $str) !== false) {
+                $result[] = $pokemon;
+            }
+        }
+        return $result;
+    }
 
     /**
      * 合計ステータスで並び替えて取得
@@ -17,16 +81,12 @@ class PokemonSelect
      */
     public function orderTotalStatus($ids, $order = SORT_DESC)
     {
-        $pokemons = [];
-        foreach ($ids as $id) {
-            $Pokemon = new Pokemon($id);
-            $pokemons[] = $Pokemon->get();
-        }
+        $pokemons = $this->multi($ids);
         foreach ($pokemons as $pokemon) {
-            $status_array[] = $pokemon['status_total'];
-            $id_array[] = $pokemon['id'];
+            $key_first[] = $pokemon['status_total'];
+            $key_second[] = $pokemon['id'];
         }
-        array_multisort($status_array, $order, SORT_NUMERIC, $id_array, SORT_ASC, SORT_NUMERIC, $pokemons);
+        array_multisort($key_first, $order, SORT_NUMERIC, $key_second, SORT_ASC, SORT_NUMERIC, $pokemons);
         return $pokemons;
     }
     /**
@@ -36,16 +96,12 @@ class PokemonSelect
      */
     public function orderHpStatus($ids, $order = SORT_DESC)
     {
-        $pokemons = [];
-        foreach ($ids as $id) {
-            $Pokemon = new Pokemon($id);
-            $pokemons[] = $Pokemon->get();
-        }
+        $pokemons = $this->multi($ids);
         foreach ($pokemons as $pokemon) {
-            $status_array[] = $pokemon['status']['hp'];
-            $id_array[] = $pokemon['id'];
+            $key_first[] = $pokemon['status']['hp'];
+            $key_second[] = $pokemon['id'];
         }
-        array_multisort($status_array, $order, SORT_NUMERIC, $id_array, SORT_ASC, SORT_NUMERIC, $pokemons);
+        array_multisort($key_first, $order, SORT_NUMERIC, $key_second, SORT_ASC, SORT_NUMERIC, $pokemons);
         return $pokemons;
     }
     /**
@@ -55,16 +111,12 @@ class PokemonSelect
      */
     public function orderAttackStatus($ids, $order = SORT_DESC)
     {
-        $pokemons = [];
-        foreach ($ids as $id) {
-            $Pokemon = new Pokemon($id);
-            $pokemons[] = $Pokemon->get();
-        }
+        $pokemons = $this->multi($ids);
         foreach ($pokemons as $pokemon) {
-            $status_array[] = $pokemon['status']['attack'];
-            $id_array[] = $pokemon['id'];
+            $key_first[] = $pokemon['status']['attack'];
+            $key_second[] = $pokemon['id'];
         }
-        array_multisort($status_array, $order, SORT_NUMERIC, $id_array, SORT_ASC, SORT_NUMERIC, $pokemons);
+        array_multisort($key_first, $order, SORT_NUMERIC, $key_second, SORT_ASC, SORT_NUMERIC, $pokemons);
         return $pokemons;
     }
 }

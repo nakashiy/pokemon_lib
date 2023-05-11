@@ -3,9 +3,11 @@
 namespace pokemon_lib\manager;
 
 use pokemon_lib\core\CurlManager;
-use pokemon_lib\core\RedisConnection;
+use pokemon_lib\core\RedisManager;
 
-// ポケモンAPIを利用するクラス
+/**
+ * ポケモン1体の情報を操作するクラス
+ */
 class Pokemon
 {
     private const BASE_URL = 'https://pokeapi.co/api/v2/';
@@ -22,10 +24,9 @@ class Pokemon
     {
         $this->id = $id;
         // RedisにキャッシュがあればAPIを実行しない
-        $redisinstance = RedisConnection::getInstance();
-        $Redis = $redisinstance->connect('localhost');
-        $redis_key = RedisConnection::REDIS_KEY . ':pokemon:' . sprintf('%04d', $this->id);
-        $this->cache = $Redis->get($redis_key);
+        $RedisManager = new RedisManager;
+        $redis_key = $RedisManager::POKEMON_KEY . ':' . sprintf('%04d', $this->id);
+        $this->cache = $RedisManager->get($redis_key);
         if (!empty($this->cache)) return;
 
         // APIでポケモン情報取得
@@ -44,14 +45,14 @@ class Pokemon
         $this->info['weight'] = $result['pokemon']['weight'];
         $this->info['height'] = $result['pokemon']['height'];
         $this->info['img_url'] = 'https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/' . $this->id . '.png';
-        $Redis->set($redis_key, json_encode($this->info));
-        $this->cache = $Redis->get($redis_key);
+        $RedisManager->set($redis_key, $this->info);
+        $this->cache = $RedisManager->get($redis_key);
     }
 
     // ポケモン情報取得
     public function get()
     {
-        return json_decode($this->cache, true);
+        return $this->cache;
     }
 
     /**

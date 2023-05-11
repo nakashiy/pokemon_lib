@@ -13,7 +13,6 @@ class RedisConnection
 
     private static $instance;
     private static $connections;
-    const REDIS_KEY = 'POKEMON_LIB';
 
     public function __destruct()
     {
