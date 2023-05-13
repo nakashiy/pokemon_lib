@@ -59,7 +59,7 @@ class RedisConnection
             self::$connections[$servername] = $Redis;
             return self::$connections[$servername];
         } catch (Exception $e) {
-            throw new Exception("Redis接続に失敗しました。");
+            throw new Exception("Redis接続に失敗しました。:" . mb_convert_encoding($e->getMessage(), 'utf-8', 'sjis'));
         }
     }
 
