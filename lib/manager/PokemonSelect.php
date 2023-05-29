@@ -33,7 +33,10 @@ class PokemonSelect
         $pokemons = [];
         foreach ($ids as $id) {
             $Pokemon = new Pokemon($id);
-            $pokemons[] = $Pokemon->get();
+            $result = $Pokemon->get();
+            if ($result) {
+                $pokemons[] = $result;
+            }
         }
         return $pokemons;
     }

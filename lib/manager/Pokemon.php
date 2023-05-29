@@ -25,6 +25,7 @@ class Pokemon
     public function __construct($id)
     {
         try {
+            if ($id < 1 || 1010 < $id) return;
             $this->id = $id;
             $RedisManager = new RedisManager;
             $redis_key = $RedisManager::POKEMON_KEY . ':' . sprintf('%04d', $this->id);
@@ -48,6 +49,7 @@ class Pokemon
             $this->setName($result);
             $this->setStatus($result);
             $this->setText($result);
+            $this->buffer['set_time'] = date('Y-m-d H:i:s');
             $this->buffer['id'] = $result['pokemon']['id'];
             $this->buffer['weight'] = $result['pokemon']['weight'];
             $this->buffer['height'] = $result['pokemon']['height'];

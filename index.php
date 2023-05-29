@@ -1,5 +1,5 @@
 <?php
-require_once './config/ini.php';
+require_once __DIR__ . '/config/ini.php';
 
 // use pokemon_lib\manager\Pokemon;
 use pokemon_lib\manager\PokemonSelect;
@@ -15,7 +15,7 @@ $PokemonSelect = new PokemonSelect();
 //$pokemons = $PokemonSelect->orderAttackStatus($ids);
 //console($pokemons);
 
-$i = 1;
+$i = 10199;
 console($PokemonSelect->single($i));
 
 //$RedisManager = new RedisManager();

@@ -14,6 +14,8 @@
     <script type="text/javascript" charset="utf8" src="https://code.jquery.com/jquery-3.5.1.js"></script>
     <script type="text/javascript" charset="utf8" src="https://cdn.datatables.net/1.13.1/js/jquery.dataTables.min.js"></script>
     <script type="text/javascript" charset="utf8" src="https://cdn.datatables.net/1.13.1/js/dataTables.bootstrap5.min.js"></script>
+    <!-- チャート -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js@3.7.1"></script>
 </head>
 
 <body style="visibility:hidden" onLoad="document.body.style.visibility='visible'">
@@ -24,7 +26,7 @@
 
     $PokemonSelect = new PokemonSelect();
 
-    // $ids = range(1, 151);
+    $ids = range(1, 10);
     // $pokemons = $PokemonSelect->multi($ids);
     $pokemons = $PokemonSelect->all();
     console($pokemons);
@@ -48,25 +50,75 @@
             </thead>
             <tbody>
                 <?php foreach ($pokemons as $pokemon) : ?>
+                    <!-- リスト -->
                     <tr>
-                        <td class="text-nowrap align-middle p-0"><a href="<?= $link . $pokemon['id'] ?>" class="d-block text-decoration-none p-2 text-dark text-end"><?= $pokemon['id']; ?></a></td>
-                        <td class="text-nowrap align-middle p-0"><a href="<?= $link . $pokemon['id'] ?>" class="d-block text-decoration-none p-2 text-dark"><?= $pokemon['name']['ja']; ?></a></td>
-                        <td class="text-nowrap align-middle p-0"><a href="<?= $link . $pokemon['id'] ?>" class="d-block text-decoration-none p-2 text-dark text-end"><?= $pokemon['status']['hp']; ?></a></td>
-                        <td class="text-nowrap align-middle p-0"><a href="<?= $link . $pokemon['id'] ?>" class="d-block text-decoration-none p-2 text-dark text-end"><?= $pokemon['status']['attack']; ?></a></td>
-                        <td class="text-nowrap align-middle p-0"><a href="<?= $link . $pokemon['id'] ?>" class="d-block text-decoration-none p-2 text-dark text-end"><?= $pokemon['status']['defense']; ?></a></td>
-                        <td class="text-nowrap align-middle p-0"><a href="<?= $link . $pokemon['id'] ?>" class="d-block text-decoration-none p-2 text-dark text-end"><?= $pokemon['status']['special-attack']; ?></a></td>
-                        <td class="text-nowrap align-middle p-0"><a href="<?= $link . $pokemon['id'] ?>" class="d-block text-decoration-none p-2 text-dark text-end"><?= $pokemon['status']['special-defense']; ?></a></td>
-                        <td class="text-nowrap align-middle p-0"><a href="<?= $link . $pokemon['id'] ?>" class="d-block text-decoration-none p-2 text-dark text-end"><?= $pokemon['status']['speed']; ?></a></td>
-                        <td class="text-nowrap align-middle p-0"><a href="<?= $link . $pokemon['id'] ?>" class="d-block text-decoration-none p-2 text-dark text-end fw-bold"><?= $pokemon['status_total']; ?></a></td>
+                        <td class="text-nowrap align-middle p-0"><a href="" class="d-block text-decoration-none p-2 text-dark text-end" data-bs-toggle="modal" data-bs-target="#modal<?= $pokemon['id'] ?>"><?= $pokemon['id']; ?></a></td>
+                        <td class="text-nowrap align-middle p-0"><a href="" class="d-block text-decoration-none p-2 text-dark" data-bs-toggle="modal" data-bs-target="#modal<?= $pokemon['id'] ?>"><?= $pokemon['name']['ja']; ?></a></td>
+                        <td class="text-nowrap align-middle p-0"><a href="" class="d-block text-decoration-none p-2 text-dark text-end" data-bs-toggle="modal" data-bs-target="#modal<?= $pokemon['id'] ?>"><?= $pokemon['status']['hp']; ?></a></td>
+                        <td class="text-nowrap align-middle p-0"><a href="" class="d-block text-decoration-none p-2 text-dark text-end" data-bs-toggle="modal" data-bs-target="#modal<?= $pokemon['id'] ?>"><?= $pokemon['status']['attack']; ?></a></td>
+                        <td class="text-nowrap align-middle p-0"><a href="" class="d-block text-decoration-none p-2 text-dark text-end" data-bs-toggle="modal" data-bs-target="#modal<?= $pokemon['id'] ?>"><?= $pokemon['status']['defense']; ?></a></td>
+                        <td class="text-nowrap align-middle p-0"><a href="" class="d-block text-decoration-none p-2 text-dark text-end" data-bs-toggle="modal" data-bs-target="#modal<?= $pokemon['id'] ?>"><?= $pokemon['status']['special-attack']; ?></a></td>
+                        <td class="text-nowrap align-middle p-0"><a href="" class="d-block text-decoration-none p-2 text-dark text-end" data-bs-toggle="modal" data-bs-target="#modal<?= $pokemon['id'] ?>"><?= $pokemon['status']['special-defense']; ?></a></td>
+                        <td class="text-nowrap align-middle p-0"><a href="" class="d-block text-decoration-none p-2 text-dark text-end" data-bs-toggle="modal" data-bs-target="#modal<?= $pokemon['id'] ?>"><?= $pokemon['status']['speed']; ?></a></td>
+                        <td class="text-nowrap align-middle p-0"><a href="" class="d-block text-decoration-none p-2 text-dark text-end fw-bold" data-bs-toggle="modal" data-bs-target="#modal<?= $pokemon['id'] ?>"><?= $pokemon['status_total']; ?></a></td>
                         <td class="text-nowrap align-middle p-0">
-                            <a href="<?= $link . $pokemon['id'] ?>" class="d-block text-decoration-none">
+                            <a href="" class="d-block text-decoration-none" data-bs-toggle="modal" data-bs-target="#modal<?= $pokemon['id'] ?>">
                                 <img src="<?= $pokemon['imgs']['front_default']; ?>" alt="画像なし" style="max-height: 50px;">
-                                <img src="<?= $pokemon['imgs']['back_default']; ?>" alt="画像なし" style="max-height: 50px;">
+                                <!-- <img src="<?= $pokemon['imgs']['back_default']; ?>" alt="画像なし" style="max-height: 50px;">
                                 <img src="<?= $pokemon['imgs']['front_shiny']; ?>" alt="画像なし" style="max-height: 50px;">
-                                <img src="<?= $pokemon['imgs']['back_shiny']; ?>" alt="画像なし" style="max-height: 50px;">
+                                <img src="<?= $pokemon['imgs']['back_shiny']; ?>" alt="画像なし" style="max-height: 50px;"> -->
                             </a>
                         </td>
                     </tr>
+                    <?php if (false) : ?>
+                        <!-- モーダル -->
+                        <div id="modal<?= $pokemon['id'] ?>" class="modal fade" tabindex="-1" role="dialog" aria-labelledby="modal<?= $pokemon['id'] ?>-label" aria-hidden="true">
+                            <div class="modal-dialog modal-dialog-centered" role="document">
+                                <div class="modal-content">
+                                    <div class="modal-header px-0 bg-dark">
+                                        <img class="d-block w-50 m-auto" src="<?= $pokemon['imgs']['other']['official-artwork']['front_default'] ?>" class="img-fluid">
+                                    </div>
+                                    <div class="modal-body">
+                                        <!-- チャート -->
+                                        <canvas id="pokemonStatus<?= $pokemon['id'] ?>"></canvas>
+                                        <script>
+                                            const ctx<?= $pokemon['id'] ?> = document.getElementById("pokemonStatus<?= $pokemon['id'] ?>");
+                                            new Chart(ctx<?= $pokemon['id'] ?>, {
+                                                type: 'radar',
+                                                data: {
+                                                    labels: ["HP", "攻撃", "防御", "特攻", "特防", "素早さ"],
+                                                    datasets: [{
+                                                        label: "<?= $pokemon['name']['ja'] ?>",
+                                                        data: [
+                                                            <?= $pokemon['status']['hp'] ?>,
+                                                            <?= $pokemon['status']['attack'] ?>,
+                                                            <?= $pokemon['status']['defense'] ?>,
+                                                            <?= $pokemon['status']['special-attack'] ?>,
+                                                            <?= $pokemon['status']['special-defense'] ?>,
+                                                            <?= $pokemon['status']['speed'] ?>,
+                                                        ],
+                                                        backgroundColor: "rgba(67, 133, 215, 0.5)",
+                                                        borderColor: "rgba(67, 133, 215, 1)",
+                                                    }]
+                                                },
+                                                options: {
+                                                    scales: {
+                                                        r: {
+                                                            max: 150, //グラフの最大値
+                                                            min: 0, //グラフの最小値
+                                                            ticks: {
+                                                                stepSize: 50 //目盛間隔
+                                                            }
+                                                        }
+                                                    },
+                                                }
+                                            });
+                                        </script>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    <?php endif; ?>
                 <?php endforeach; ?>
             </tbody>
         </table>
